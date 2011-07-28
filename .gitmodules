@@ -1,0 +1,3 @@
+[submodule "protected/extensions/facebook"]
+	path = protected/extensions/facebook
+	url = git://github.com/facebook/php-sdk.git

@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 class SiteController extends Controller
 {
 	/**
@@ -29,7 +29,12 @@ class SiteController extends Controller
 	{
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index');
+		$this->render('index', array(
+			'VkAuth' => Yii::app()->socialVk,
+			'FbAuth' => Yii::app()->socialFb,
+			#'VkData' => Yii::app()->session['vk'],
+			'VkData' => ! empty($_SESSION['vk']) ? $_SESSION['vk'] : false,
+		));
 	}
 
 	/**
@@ -99,5 +104,32 @@ class SiteController extends Controller
 	{
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
+	}
+
+	public function actionSocial($code='', $access_token = '', $uid = ''){
+		$VkAuth = Yii::app()->socialVk;
+
+		if ($access_token)
+		{
+			$aJson = $VkAuth->call('getProfiles', array('uid' => $uid), $access_token);
+		}
+		elseif ($code)
+		{
+			$aJson = $VkAuth->getAccessToken($code);
+			$_SESSION['vk'] = array(
+				'uid' => $aJson['user_id'],
+				'access_token' => $aJson['access_token'],
+			);
+#var_dump($_SESSION);die;
+#			var_dump(Yii::app()->session['vk']);
+#			die;
+			$this->redirect('/');
+#			echo CHtml::link('/', 'vk');
+#			die;
+		}
+		$this->render('test', array(
+			'VkAuth' => $VkAuth,
+			'aJson' => isset($aJson) ? $aJson : false,
+		));
 	}
 }

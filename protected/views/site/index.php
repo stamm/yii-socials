@@ -1,16 +1,24 @@
-<?php $this->pageTitle=Yii::app()->name; ?>
+Проверяем работу авторизации через соц сети:
+<ol>
+<li><?php echo CHtml::link('Вконтакте', $VkAuth->getLink()); ?> - сделано</li>
+<li><?php echo CHtml::link('Facebook', $FbAuth->getLink()); ?> - в тесте</li>
+</ol>
+<?# var_dump($_SESSION);?>
+<?php if ( ! empty($_SESSION['vk'])) { ?>
+	VK:
+	<pre>
+	<?php var_dump($VkAuth->call('getProfiles', array('uid' => $_SESSION['vk']['uid'], 'fields'=>'uid, first_name, last_name, nickname, domain, sex, bdate, city, country, timezone, photo, photo_medium, photo_big, has_mobile, rate, contacts, education, online'), $_SESSION['vk']['access_token'])); ?>
+	</pre>
+<?php } ?>
 
-<h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
 
-<p>Congratulations! You have successfully created your Yii application.</p>
+<?php if ( $fbProfile = $FbAuth->getData()) { ?>
+	FB:
+	<pre>
+	<?php var_dump($fbProfile); ?>
+	</pre>
+<?php } ?>
 
-<p>You may change the content of this page by modifying the following two files:</p>
-<ul>
-	<li>View file: <tt><?php echo __FILE__; ?></tt></li>
-	<li>Layout file: <tt><?php echo $this->getLayoutFile('main'); ?></tt></li>
-</ul>
+<?php #var_dump($_SESSION); ?>
 
-<p>For more details on how to further develop this application, please read
-the <a href="http://www.yiiframework.com/doc/">documentation</a>.
-Feel free to ask in the <a href="http://www.yiiframework.com/forum/">forum</a>,
-should you have any questions.</p>
+
